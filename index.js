@@ -1,17 +1,14 @@
-const { response } = require('express');
 const express = require('express');
 const app = express();
+const https = require('https');
 const api_url = "https://arxiv.org/abs/1612.01840";
 
 app.use(express.json());
 
-async function getData(api_url) {
-    const res = await fetch(api_url)
-    var data = await response.json()
-}
+https.get()
 
 app.get('/', (req, res) => {
-    res.send('Hello World')
+    res.send(getData(api_url))
 });
 
 //Assigning Port
