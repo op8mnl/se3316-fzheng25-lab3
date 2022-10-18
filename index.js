@@ -13,15 +13,20 @@ const tracks = [
 //using express to load front end files from static
 app.use('/',express.static('static')); 
 
+app.use((req,res,next)=>{
+    console.log(`${req.method} request for ${req.url}`)
+    next();
+});
+
 //routing for all tracks
 app.get('/api/tracks/', (req,res) =>{
-    console.log(`GET response for ${req.url}`)
     res.send(tracks)
 });
+
 //routing for specific tracks using parameter
 app.get('/api/tracks/:track_id', (req,res) =>{
     const id = req.params.track_id;
-    console.log(`GET response for ${req.url}`)
+    
     const track = tracks.find(t => t.id === parseInt(id));
     if (track){ 
         res.send(track)
