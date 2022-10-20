@@ -7,11 +7,11 @@
     height: 20vh;
     width: 100vw;
     background: rgb(0,0,0);
-    background: linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(15,121,9,1) 48%, rgba(0,255,51,1) 100%);
+    background: linear-gradient(0deg, rgba(0,0,0,1) 0%, rgb(82, 82, 82) 100%);
 }
 .title{
     order:1;
-    margin-top: 2%;
+    margin-top: 0.25%;
     margin-left:1%;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 400%;
@@ -36,11 +36,56 @@
     border-radius: 20px;
     background: rgba(56, 56, 56, 0.356);
 }
+.content-box-lg{
+    order:2;
+    height: 20vh;  
+    width: calc(100% - 2em);
+    margin: 1em;
+    border-radius: 20px;
+    background: rgba(56, 56, 56, 0.356);
+    display:flex;
+    flex-wrap: wrap;
+}
 .search-container{
     order:2;
-    height: 10vh;  
-    width: 20vw;
-    transform:translate(0%,30%);
+    margin: 1em;
+    height: 3vh;  
+    width: 15vw;
     display: flex;
+    flex-wrap: wrap;
+}
+
+.form-control{
+    order:1;
+    display: block;
+    width: 100%;
+    height:100%;
+    border:2px solid rgb(146, 146, 146);
+    background-color: rgb(56, 56, 56);
+    border-radius: 7px;
+    color:white;
     
+}
+.form-control:focus{
+    outline-width: 0;
+    border:2px solid rgb(255, 255, 255);
+}
+::placeholder{
+    color:rgb(207, 207, 207);
+}
+    
+ul, li{
+    display: block;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    order:1;
+    color: white;
+    margin-top: 0.75%;
+    margin-left:1%;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 200%;
 }
