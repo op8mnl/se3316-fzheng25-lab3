@@ -2,8 +2,28 @@ const express = require('express');
 const app = express();
 const router = express.Router();
 router.use(express.json());
-const csv = require('csv-parser')
-const fs = require('fs')
+const csv = require('csv-parser');
+const fs = require('fs');
+const mongoose = require('mongoose');
+
+//connecting to mongoDB 
+const username = "user";
+const password = "t38fofCgATlfDaEL";
+const cluster = "cluster0.jkogtcx";
+
+mongoose.connect(
+  `mongodb+srv://${username}:${password}@${cluster}.mongodb.net/?retryWrites=true&w=majority`, 
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  }
+);
+
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "connection error: "));
+db.once("open", function () {
+  console.log("Connected successfully");
+});
 
 //Assigning Port
 const port = process.env.PORT || 3000;

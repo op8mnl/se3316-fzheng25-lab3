@@ -1,17 +1,14 @@
-console.log("scripting")
 async function populateTracks(){
     console.log("attempting to populate")
     const res = await fetch("/api/tracks");
     const data = await res.json();
     console.log(JSON.stringify(data));
     var ul = document.getElementById("result-list")
-    for (var i = 0; i < 20; i++) {
+    for (var i = 0; i < data.length; i++){
         var element = document.createElement("div")
         element.className = "element"
         var trackid = document.createElement("div")
         trackid.className = "number"
-        var image = document.createElement("div")
-        image.className = "image"
         var title = document.createElement("div")
         title.className = "titleE"
         var artist = document.createElement("div")
@@ -30,7 +27,6 @@ async function populateTracks(){
         duration.appendChild(document.createTextNode(JSON.stringify(data[i].track_duration).replaceAll('"','')))
 
         element.appendChild(trackid)
-        element.appendChild(image)
         element.appendChild(title)
         element.appendChild(album)
         element.appendChild(artist)
