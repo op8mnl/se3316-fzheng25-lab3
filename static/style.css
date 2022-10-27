@@ -19,6 +19,10 @@
     color: white;
 }
 /* container styling ============================================================================================== */
+body{
+    overflow-y: hidden;
+    overflow-x: hidden;
+}
 .box{
     display: flex;
     align-content: flex-start;
@@ -71,8 +75,10 @@
 ul, li{
     display: block;
     list-style: none;
+    width: 100%;
     margin: 0;
     padding: 0;
+    color: white;
 }
 h1 {
     color: white;
@@ -153,6 +159,7 @@ h2 {
     width:100%;
     height:93%;
     overflow-y: scroll;
+    overflow-x: hidden;
     order:2;
 }
 .tracks-element{
@@ -179,13 +186,13 @@ h2 {
     text-align: start;
     order:3;
     height:100%;
-    width:30%;
+    width:25%;
 }
 .album-header{
     text-align: start;
     order:4;
     height:100%;
-    width:30%;
+    width:25%;
 }
 .artist-header{
     text-align: start;
@@ -197,13 +204,76 @@ h2 {
     text-align: start;
     order:6;
     height:100%;
-    width:10%;
+    width:12%;
 }
 .add-header{
     text-align: start;
     order:7;
     height:100%;
+    width:8%;
+}
+.number{
+    text-align: center;
+    order:1;
+    height:100%;
+    line-height: 400%;
     width:5%;
+}
+.image{
+    text-align: center; 
+    order:2;
+    height:100%;
+    width:10%;
+    line-height: 400%;
+}
+.titleE{
+    text-align: start;
+    order:3;
+    height:100%;
+    width:25%;
+    line-height: 400%;
+}
+.album{
+    text-align: start;
+    order:4;
+    height:100%;
+    width:25%;
+    line-height: 400%;
+}
+.artist{
+    text-align: start;
+    order:5;
+    height:100%;
+    width:15%;
+    line-height: 400%;
+}
+.duration{
+    text-align: start;
+    order:6;
+    height:100%;
+    width:12%;
+    line-height: 400%;
+}
+.add{
+    text-align: start;
+    order:7;
+    height:100%;
+    width:8%;
+    line-height: 400%;
+}
+.element{
+    display:flex;
+    order:1;
+    width: 100%;
+    height:10%;
+    border: 1px white solid;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 90%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    vertical-align: middle;
+    align-content: flex-start;
 }
 /* Scroll styling ==============================================================================================*/
 *::-webkit-scrollbar {

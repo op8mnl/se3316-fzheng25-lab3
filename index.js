@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
-app.use(express.json());
+const router = express.Router();
+router.use(express.json());
 const csv = require('csv-parser')
 const fs = require('fs')
 
@@ -46,13 +47,19 @@ app.use((req,res,next)=>{
     next();
 });
 
-//routing for all tracks
-app.get('/api/tracks/', (req,res) =>{
-    res.send(tracks)
-});
+router.use(express.json());
+
+//routing for all tracks, albums, artists and genres
+router.route('/')
+    .get((req,res) => {
+        res.send(tracks);
+        // res.send(albums);
+        // res.send(genres);
+        // res.send(artists);
+    })
 
 //routing for specific tracks using parameter
-app.get('/api/tracks/:track_id', (req,res) =>{
+router.get('/api/tracks/:track_id', (req,res) =>{
     const id = req.params.track_id;
     
     const track = tracks.find(t => t.track_id == parseInt(id));
@@ -61,10 +68,6 @@ app.get('/api/tracks/:track_id', (req,res) =>{
     }else{
         res.status(404).send(`Track ${id} was not found`);
     }
-});
-//routing for all genres
-app.get('/api/genres/', (req,res) =>{
-    res.send(genres)
 });
 
 //routing for specific genres using parameter
@@ -79,11 +82,6 @@ app.get('/api/genres/:genre_id', (req,res) =>{
     }
 });
 
-//routing for all albums
-app.get('/api/albums/', (req,res) =>{
-    res.send(albums)
-});
-
 //routing for specific albums using parameter
 app.get('/api/albums/:album_id', (req,res) =>{
     const id = req.params.album_id;
@@ -96,5 +94,6 @@ app.get('/api/albums/:album_id', (req,res) =>{
     }
 });
 
+app.use("/api/tracks",router)
 
 app.listen(port,() => { console.log(`listening on port ${port}...`)});
