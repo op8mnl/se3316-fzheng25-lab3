@@ -1,10 +1,8 @@
 async function populateTracks(){
-    console.log("attempting to populate")
     const res = await fetch("/api/tracks");
     const data = await res.json();
-    console.log(JSON.stringify(data));
     var ul = document.getElementById("result-list")
-    for (var i = 0; i < data.length; i++){
+    for (var i = 0; i < 1000; i++){
         var element = document.createElement("div")
         element.className = "element"
         var trackid = document.createElement("div")
@@ -36,4 +34,76 @@ async function populateTracks(){
         ul.appendChild(element);
     }
 }
+async function populatePlaylists(){
+    const res = await fetch("/api/playlists");
+    const data = await res.json();
+}
 populateTracks();
+populatePlaylists();
+
+
+document.getElementById('addPlaylist').addEventListener('click', 
+    async function createPlaylists() {
+        var id;
+        var noOfTracks = 0;
+        var duration = '00:00';
+        
+        id = await checkPlaylist()
+
+        var playlistContent = document.getElementById('content-list');
+        var playlistName = document.createElement('h3');
+        var element = document.createElement('div');
+        element.className = 'playlist-element';
+        element.id = id;
+        var contentHeader = document.createElement('div');
+        contentHeader.className = 'playlist-header-row';
+        var contentRow = document.createElement('div');
+        contentRow.className = 'playlist-content-row';
+
+        playlistName.setAttribute('contentEditable', 'true');
+        playlistName.appendChild(document.createTextNode(`Playlist #${id}`));
+
+        contentHeader.appendChild(playlistName);
+        var noTracks = document.createTextNode(`Tracks: ${noOfTracks}`);
+        var dur = document.createTextNode(`${duration}`);
+
+        var wrapper1 = document.createElement('div');
+        var wrapper2 = document.createElement('div');
+        wrapper1.className = 'wrapper1';
+        wrapper2.className = 'wrapper2';
+
+        wrapper1.appendChild(noTracks);
+        wrapper2.appendChild(dur);
+        contentRow.appendChild(wrapper2);
+        contentRow.appendChild(wrapper1);
+        
+
+        element.appendChild(contentHeader);
+        element.appendChild(contentRow);
+        playlistContent.appendChild(element);
+
+        const response = await fetch('/api/playlists', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                playlistName : `Playlist #${id}`,
+                playlist_id : id,
+                total_duration : duration,
+                tracks : [],
+            })
+        });
+        const resText = await response.text();
+        console.log(resText)
+        
+});
+
+async function checkPlaylist(){
+    const res = await fetch("/api/playlists");
+    const data = await res.json();
+    var id = 1;
+    console.log(data)
+    if (!(JSON.stringify(data).size == undefined)){
+        id = data[data.size].playlist_id + 1
+    }
+    return id;
+}

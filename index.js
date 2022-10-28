@@ -1,10 +1,10 @@
-const express = require('express');
+import express from 'express';
 const app = express();
 const router = express.Router();
-router.use(express.json());
-const csv = require('csv-parser');
-const fs = require('fs');
-const mongoose = require('mongoose');
+import csv from 'csv-parser';
+import { createReadStream } from 'fs';
+import mongoose from 'mongoose';
+import Playlist from './playlist.js';
 
 //connecting to mongoDB 
 const username = "user";
@@ -28,38 +28,42 @@ db.once("open", function () {
 //Assigning Port
 const port = process.env.PORT || 3000;
 
+app.use(express.json());
+
 //using express to load front end files from static
 app.use('/',express.static('static')); 
 
 //Reading all csv information and storing in local arrays of json objects
 const genres = [];
-fs.createReadStream('assets/genres.csv')
+createReadStream('assets/genres.csv')
   .pipe(csv())
   .on('data', (data) => genres.push(data))
   .on('end', () => {
     console.log("Loaded genres");
   });
 const tracks = [];
-  fs.createReadStream('assets/raw_tracks.csv')
+  createReadStream('assets/raw_tracks.csv')
     .pipe(csv())
-    .on('data', (data) => tracks.push(data))
+    .on('data', (data) => {tracks.push(data)})
     .on('end', () => {
         console.log("Loaded tracks");
     });
 const albums = [];
-fs.createReadStream('assets/raw_albums.csv')
+createReadStream('assets/raw_albums.csv')
   .pipe(csv())
   .on('data', (data) => albums.push(data))
   .on('end', () => {
     console.log("Loaded albums");
   });
 const artists = [];
-fs.createReadStream('assets/raw_artists.csv')
+createReadStream('assets/raw_artists.csv')
   .pipe(csv())
   .on('data', (data) => artists.push(data))
   .on('end', () => {
     console.log("Loaded artists");
   });
+
+
 
 //middleware for logging 
 app.use((req,res,next)=>{
@@ -67,10 +71,8 @@ app.use((req,res,next)=>{
     next();
 });
 
-router.use(express.json());
-
 //routing for all tracks, albums, artists and genres
-router.route('/')
+router.route('/tracks')
     .get((req,res) => {
         res.send(tracks);
         // res.send(albums);
@@ -91,7 +93,7 @@ router.get('/api/tracks/:track_id', (req,res) =>{
 });
 
 //routing for specific genres using parameter
-app.get('/api/genres/:genre_id', (req,res) =>{
+router.get('/api/genres/:genre_id', (req,res) =>{
     const id = req.params.genre_id;
     
     const genre = genres.find(t => t.genre_id == parseInt(id));
@@ -103,7 +105,7 @@ app.get('/api/genres/:genre_id', (req,res) =>{
 });
 
 //routing for specific albums using parameter
-app.get('/api/albums/:album_id', (req,res) =>{
+router.get('/api/albums/:album_id', (req,res) =>{
     const id = req.params.album_id;
     
     const album = albums.find(t => t.album_id == parseInt(id));
@@ -113,7 +115,29 @@ app.get('/api/albums/:album_id', (req,res) =>{
         res.status(404).send(`Album ${id} was not found`);
     }
 });
+const playlists = [];
+router.route('/playlists') 
+    .get((req,res)  =>  {
+        res.send(playlists)
+    })
+    .post((req,res)=>{
+      
+        const playlist = new Playlist({
+          playlist_id: 1,
+          playlistName: "name",
+          no_of_tracks: 2,
+          total_duration: "00:00"
+        })
+        playlist.save(function(err, doc) {
+          if (err) return console.error(err);
+          console.log("Document inserted succussfully!");
+        });
+        res.send(req.body);
+    })
+    .put((req,res)=>{
+        
+    })
 
-app.use("/api/tracks",router)
+app.use("/api",router)
 
 app.listen(port,() => { console.log(`listening on port ${port}...`)});
