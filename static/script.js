@@ -37,15 +37,46 @@ async function populateTracks(){
 async function populatePlaylists(){
     const res = await fetch("/api/playlists");
     const data = await res.json();
+
+    var playlistContent = document.getElementById('content-list');
+    for (var i = 0 ; i < data.size; i++) {
+        var playlistName = document.createElement('h3');
+        var element = document.createElement('div');
+        var contentHeader = document.createElement('div');
+        var contentRow = document.createElement('div');
+        var wrapper1 = document.createElement('div');
+        var wrapper2 = document.createElement('div');
+
+        element.className = 'playlist-element';
+        contentHeader.className = 'playlist-header-row';
+        contentHeader.className = 'playlist-header-row';
+        contentRow.className = 'playlist-content-row';
+        wrapper1.className = 'wrapper1';
+        wrapper2.className = 'wrapper2';
+        playlistName.setAttribute('contentEditable', 'true');
+
+        element.id = data[i].playlist_id;
+        playlistName.appendChild(document.createTextNode(`Playlist #${data[i].playlist_id}`));
+        var noTracks = document.createTextNode(`Tracks: ${data[i].no_of_tracks}`);
+        var dur = document.createTextNode(`${data[i].total_duration}`);
+
+        contentHeader.appendChild(playlistName);
+        wrapper1.appendChild(noTracks);
+        wrapper2.appendChild(dur);
+        contentRow.appendChild(wrapper2);
+        contentRow.appendChild(wrapper1);
+        element.appendChild(contentHeader);
+        element.appendChild(contentRow);
+        playlistContent.appendChild(element);
+    }
 }
 populateTracks();
 populatePlaylists();
 
-
 document.getElementById('addPlaylist').addEventListener('click', 
     async function createPlaylists() {
         var id;
-        var noOfTracks = 0;
+        const noOfTracks = 0;
         var duration = '00:00';
         
         id = await checkPlaylist()
@@ -88,13 +119,11 @@ document.getElementById('addPlaylist').addEventListener('click',
             body: JSON.stringify({
                 playlistName : `Playlist #${id}`,
                 playlist_id : id,
+                no_of_tracks : noOfTracks,
                 total_duration : duration,
                 tracks : [],
             })
         });
-        const resText = await response.text();
-        console.log(resText)
-        
 });
 
 async function checkPlaylist(){

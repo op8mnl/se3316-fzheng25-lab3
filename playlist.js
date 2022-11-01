@@ -4,16 +4,16 @@ const PlaylistSchema = new Schema({
     playlist_id: {
         type: Number,
         required: true,
-      },
+    },
+    playlist_name: {
+        type: String,
+        required: false,
+    },
     no_of_tracks: {
-    type: Number,
-    required: true,
+        type: Number,
+        required: true,
     },
     tracks: [{
-        playlist_name: {
-            type: String,
-            required: false,
-        },
         track_id: {
             type: Number,
             required: false,

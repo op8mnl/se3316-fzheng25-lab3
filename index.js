@@ -5,6 +5,7 @@ import csv from 'csv-parser';
 import { createReadStream } from 'fs';
 import mongoose from 'mongoose';
 import Playlist from './playlist.js';
+import { request } from 'http';
 
 //connecting to mongoDB 
 const username = "user";
@@ -63,8 +64,6 @@ createReadStream('assets/raw_artists.csv')
     console.log("Loaded artists");
   });
 
-
-
 //middleware for logging 
 app.use((req,res,next)=>{
     console.log(`${req.method} request for ${req.url}`)
@@ -75,67 +74,76 @@ app.use((req,res,next)=>{
 router.route('/tracks')
     .get((req,res) => {
         res.send(tracks);
-        // res.send(albums);
-        // res.send(genres);
-        // res.send(artists);
     })
 
-//routing for specific tracks using parameter
-router.get('/api/tracks/:track_id', (req,res) =>{
-    const id = req.params.track_id;
+// //routing for specific tracks using parameter
+// router.get('/api/tracks/:track_id', (req,res) =>{
+//     const id = req.params.track_id;
     
-    const track = tracks.find(t => t.track_id == parseInt(id));
-    if (track){ 
-        res.send(track)
-    }else{
-        res.status(404).send(`Track ${id} was not found`);
-    }
-});
+//     const track = tracks.find(t => t.track_id == parseInt(id));
+//     if (track){ 
+//         res.send(track)
+//     }else{
+//         res.status(404).send(`Track ${id} was not found`);
+//     }
+// });
 
-//routing for specific genres using parameter
-router.get('/api/genres/:genre_id', (req,res) =>{
-    const id = req.params.genre_id;
+// //routing for specific genres using parameter
+// router.get('/api/genres/:genre_id', (req,res) =>{
+//     const id = req.params.genre_id;
     
-    const genre = genres.find(t => t.genre_id == parseInt(id));
-    if (genre){ 
-        res.send(genre)
-    }else{
-        res.status(404).send(`Genre ${id} was not found`);
-    }
-});
+//     const genre = genres.find(t => t.genre_id == parseInt(id));
+//     if (genre){ 
+//         res.send(genre)
+//     }else{
+//         res.status(404).send(`Genre ${id} was not found`);
+//     }
+// });
 
-//routing for specific albums using parameter
-router.get('/api/albums/:album_id', (req,res) =>{
-    const id = req.params.album_id;
+// //routing for specific albums using parameter
+// router.get('/api/albums/:album_id', (req,res) =>{
+//     const id = req.params.album_id;
     
-    const album = albums.find(t => t.album_id == parseInt(id));
-    if (album){ 
-        res.send(album)
-    }else{
-        res.status(404).send(`Album ${id} was not found`);
-    }
-});
+//     const album = albums.find(t => t.album_id == parseInt(id));
+//     if (album){ 
+//         res.send(album)
+//     }else{
+//         res.status(404).send(`Album ${id} was not found`);
+//     }
+// });
 const playlists = [];
 router.route('/playlists') 
-    .get((req,res)  =>  {
-        res.send(playlists)
+    .get(async (req,res)  =>  {
+        const data = await Playlist.find();
+        for (var i = 0; i < data.length; i++){
+          playlists.push(data[i]);
+        }
+        res.send(data.length);
     })
     .post((req,res)=>{
-      
-        const playlist = new Playlist({
-          playlist_id: 1,
-          playlistName: "name",
-          no_of_tracks: 2,
-          total_duration: "00:00"
+        const data = new Playlist({
+          playlist_id: req.body.playlist_id,
+          playlist_name: req.body.playlist_name,
+          no_of_tracks: req.body.no_of_tracks,
+          total_duration: req.body.total_duration,
+          tracks: req.body.tracks
         })
-        playlist.save(function(err, doc) {
+        data.save(function(err, doc) {
           if (err) return console.error(err);
           console.log("Document inserted succussfully!");
         });
+        playlists.push(data);
         res.send(req.body);
     })
-    .put((req,res)=>{
-        
+    .delete(async (req,res)=>{
+        Playlist.findByIdAndDelete(req.body._id, function(err) { 
+          if(err) console.log(err);
+          console.log(`Playlist with id ${req.body._id} deleted`) 
+        });
+        // Playlist.remove({}, function(err) { 
+        //   console.log('collection removed') 
+        // });
+        res.send(playlists);
     })
 
 app.use("/api",router)
