@@ -2,8 +2,8 @@ import { Schema, model } from 'mongoose';
 
 const PlaylistSchema = new Schema({
     playlist_id: {
-        type: Number,
-        required: true,
+        type: String,
+        required: false,
     },
     playlist_name: {
         type: String,
@@ -35,10 +35,7 @@ const PlaylistSchema = new Schema({
             required: false,
         }
     }],
-    total_duration: {
-        type: String,
-        required: false,
-    }
+    total_duration: String,
 });
 
 export default model("Playlist", PlaylistSchema); 

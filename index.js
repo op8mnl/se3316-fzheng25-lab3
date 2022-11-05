@@ -5,7 +5,6 @@ import csv from 'csv-parser';
 import { createReadStream } from 'fs';
 import mongoose from 'mongoose';
 import Playlist from './playlist.js';
-import { request } from 'http';
 
 //connecting to mongoDB 
 const username = "user";
@@ -75,18 +74,22 @@ router.route('/tracks')
     .get((req,res) => {
         res.send(tracks);
     })
+router.route('/genres')
+    .get((req,res) => {
+        res.send(genres);
+    })
 
-// //routing for specific tracks using parameter
-// router.get('/api/tracks/:track_id', (req,res) =>{
-//     const id = req.params.track_id;
+//routing for specific tracks using parameter
+router.get('/api/tracks/:track_id', (req,res) =>{
+    const id = req.params.track_id;
     
-//     const track = tracks.find(t => t.track_id == parseInt(id));
-//     if (track){ 
-//         res.send(track)
-//     }else{
-//         res.status(404).send(`Track ${id} was not found`);
-//     }
-// });
+    const track = tracks.find(t => t.track_id == parseInt(id));
+    if (track){ 
+        res.send(track)
+    }else{
+        res.status(404).send(`Track ${id} was not found`);
+    }
+});
 
 // //routing for specific genres using parameter
 // router.get('/api/genres/:genre_id', (req,res) =>{
@@ -111,14 +114,12 @@ router.route('/tracks')
 //         res.status(404).send(`Album ${id} was not found`);
 //     }
 // });
-const playlists = [];
+var playlists = [];
 router.route('/playlists') 
     .get(async (req,res)  =>  {
         const data = await Playlist.find();
-        for (var i = 0; i < data.length; i++){
-          playlists.push(data[i]);
-        }
-        res.send(data.length);
+        playlists = [...data];
+        res.send(playlists);
     })
     .post((req,res)=>{
         const data = new Playlist({
@@ -136,15 +137,26 @@ router.route('/playlists')
         res.send(req.body);
     })
     .delete(async (req,res)=>{
-        Playlist.findByIdAndDelete(req.body._id, function(err) { 
-          if(err) console.log(err);
-          console.log(`Playlist with id ${req.body._id} deleted`) 
-        });
-        // Playlist.remove({}, function(err) { 
-        //   console.log('collection removed') 
+        // Playlist.findByIdAndDelete(req.body._id, function(err) { 
+        //   if(err) console.log(err);
+        //   console.log(`Playlist with id ${req.body._id} deleted`) 
         // });
+        Playlist.remove({}, function(err) { 
+          console.log('collection removed') 
+        });
         res.send(playlists);
     })
+router.route('/playlists/:_id')
+  .get ((req,res) => {
+    const id = req.params._id;
+    var result;
+    playlists.map((playlist,i)=>{
+      if (playlists[i]._id == id){
+        result = playlists[i];
+      }
+    });
+    res.send(result)
+  });
 
 app.use("/api",router)
 

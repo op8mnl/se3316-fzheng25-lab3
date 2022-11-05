@@ -12,8 +12,23 @@
         <div class="title">
             SE3316 Lab 3 
         </div>
+        <div class="getGenreButton">
+          <input class="button" id="getGenres"type="button" value="Get Genres" />
+        </div>
         <div class="search-container">
-          <input type="text" id="search"class="form-control" placeholder="Search...">
+          <input type="text" id="addPlaylistField"class="form-control" maxlength="20"placeholder="Add a Playlist...">
+        </div>
+        <div class="search-container">
+          <input type="text" id="delPlaylistField"class="form-control" maxlength="20"placeholder="Delete a Playlist...">
+        </div>
+        <div class="search-container">
+          <input type="text" id="search"class="form-control" maxlength="20"placeholder="Search by Artist Id...">
+        </div>
+        <div class="search-container">
+          <input type="text" id="search"class="form-control"maxlength="20" placeholder="Search by Track Id...">
+        </div>
+        <div class="search-container">
+          <input type="text" id="search"class="form-control"maxlength="20" placeholder="Search by Artist Name...">
         </div>
     </div>
     <div class="box"> 
@@ -37,7 +52,7 @@
         </div>
       </div>
       <div class="playlist-content-box">
-        <div class="playlist-header">
+        <div id = 'playlist-header' class="playlist-header">
           <h1>Playlists</h1>
           <img id = "addPlaylist"src="/addIcon.png" height="20px" width="20px">
         </div>
