@@ -202,14 +202,15 @@ async function addTrack(e){
     var playlist = document.getElementById("selected")
     if (playlist != null) {
         var parent = e.target.parentElement.parentElement
-        await fetch('/api/playlists', {
+        console.log(playlist.children[0].children[0].id+" "+parent.children[0].id)
+        const res = await fetch(`/api/playlists/${playlist.children[0].children[0].id}`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
-                playlist_id : playlist.children[0].children[0].id,
-                track : parent.children[0].id,
+                track : parent.children[0].id
             })
         });
+        console.log(res.text())
     }
 }
 
@@ -307,6 +308,7 @@ async function viewTracks(e){
     if (e.target.className == "wrapper1") {
         e.target.className = "wrapper1 selected";
         var parentid = e.target.parentElement.parentElement.id;
+        console.log(parentid)
         const res = await fetch(`/api/playlists/${parentid}`);
         const data = await res.json();
         const tracks = [...data.tracks];
