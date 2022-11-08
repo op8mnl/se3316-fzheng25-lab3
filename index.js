@@ -5,6 +5,7 @@ import csv from 'csv-parser';
 import { createReadStream } from 'fs';
 import mongoose from 'mongoose';
 import Playlist from './playlist.js';
+import Track from './tracks.js';
 
 //connecting to mongoDB 
 const username = "user";
@@ -26,7 +27,7 @@ db.once("open", function () {
 });
 
 //Assigning Port
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3000;  
 
 app.use(express.json());
 
@@ -42,12 +43,35 @@ createReadStream('assets/genres.csv')
     console.log("Loaded genres");
   });
 const tracks = [];
-  createReadStream('assets/raw_tracks.csv')
-    .pipe(csv())
-    .on('data', (data) => {tracks.push(data)})
-    .on('end', () => {
-        console.log("Loaded tracks");
-    });
+createReadStream('assets/raw_tracks.csv')
+  .pipe(csv())
+  .on('data', (data) => {tracks.push(data)})
+  .on('end', async () => {
+    const state = await Track.find();
+    if (state.length == 0){
+      for (var i = 0; i < 1000; i++) {
+        const track = new Track({
+          track_id: tracks[i].track_id,
+          album_name:tracks[i].album_title,
+          track_name:tracks[i].track_title,
+          artist:tracks[i].artist_name,
+          duration: tracks[i].track_duration,
+          album_id:tracks[i].album_id,
+          artist_id: tracks[i].artist_id,
+          tags:tracks[i].tags,
+          track_genres:tracks[i].track_genres,
+          track_date_created: tracks[i].track_date_created,
+          track_date_recorded: tracks[i].track_date_recorded,
+        });
+        track.save(function(err, doc) {
+          if (err) return console.error(err);
+        });
+      console.log(`Progress: ${i+1}/1000`);
+      }
+    }
+    console.log("Loaded tracks");
+  });
+
 const albums = [];
 createReadStream('assets/raw_albums.csv')
   .pipe(csv())
@@ -115,10 +139,13 @@ router.get('/api/tracks/:track_id', (req,res) =>{
 //     }
 // });
 var playlists = [];
+async function updatePlaylists(){
+  const data = await Playlist.find();
+  playlists = [...data];
+}
 router.route('/playlists') 
     .get(async (req,res)  =>  {
-        const data = await Playlist.find();
-        playlists = [...data];
+        updatePlaylists()
         res.send(playlists);
     })
     .post((req,res)=>{
@@ -127,7 +154,7 @@ router.route('/playlists')
           playlist_name: req.body.playlist_name,
           no_of_tracks: req.body.no_of_tracks,
           total_duration: req.body.total_duration,
-          tracks: req.body.tracks
+          tracks: req.body.tracks,
         })
         data.save(function(err, doc) {
           if (err) return console.error(err);
@@ -141,22 +168,30 @@ router.route('/playlists')
         //   if(err) console.log(err);
         //   console.log(`Playlist with id ${req.body._id} deleted`) 
         // });
-        Playlist.remove({}, function(err) { 
+        Track.remove({}, function(err) { 
           console.log('collection removed') 
         });
         res.send(playlists);
     })
-router.route('/playlists/:_id')
-  .get ((req,res) => {
-    const id = req.params._id;
-    var result;
-    playlists.map((playlist,i)=>{
-      if (playlists[i]._id == id){
-        result = playlists[i];
-      }
-    });
-    res.send(result)
-  });
+router.route('/playlists/:id')
+  .get (async (req,res) => {
+    const playlist = await Playlist.find({"_id":req.params.id});
+    res.send(playlist)
+  })
+  .post (async (req, res)=>{
+    const playlist = await Playlist.find({"playlist_id":req.params.id});
+    const track = await Track.find({"track_id":req.body.track});
+    var updatePlaylist = {
+      track_id: track[0].track_id,
+      album_name:track[0].album_name,
+      track_name:track[0].track_name,
+      artist:track[0].artist,
+      duration:track[0].duration,
+    }
+    playlist.tracks
+    updatePlaylists();
+    res.send(playlists)
+  })
 
 app.use("/api",router)
 
