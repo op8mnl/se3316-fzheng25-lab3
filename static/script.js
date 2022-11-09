@@ -202,15 +202,15 @@ async function addTrack(e){
     var playlist = document.getElementById("selected")
     if (playlist != null) {
         var parent = e.target.parentElement.parentElement
-        console.log(playlist.children[0].children[0].id+" "+parent.children[0].id)
-        const res = await fetch(`/api/playlists/${playlist.children[0].children[0].id}`, {
+        await fetch(`/api/playlists/${playlist.children[0].children[0].id}`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
                 track : parent.children[0].id
             })
         });
-        console.log(res.text())
+        document.getElementById('content-list').innerHTML='';
+        populatePlaylists();
     }
 }
 
@@ -308,48 +308,13 @@ async function viewTracks(e){
     if (e.target.className == "wrapper1") {
         e.target.className = "wrapper1 selected";
         var parentid = e.target.parentElement.parentElement.id;
-        console.log(parentid)
         const res = await fetch(`/api/playlists/${parentid}`);
         const data = await res.json();
-        const tracks = [...data.tracks];
-        var ul = document.getElementById("result-list")
-        ul.innerHTML = '';
-        tracks.map((track,i)=>{
-            var element = document.createElement("div")
-            element.className = "element"
-            var trackid = document.createElement("div")
-            trackid.className = "number"
-            trackid.id = data[i].track_id;
-            var title = document.createElement("div")
-            title.className = "titleE"
-            var artist = document.createElement("div")
-            artist.className = "artist"
-            var album = document.createElement("div")
-            album.className = "album"
-            var duration = document.createElement("div")
-            duration.className = "duration"
-            var add = document.createElement("div")
-            add.className = "add"
-            var img = document.createElement("img")
-            img.src = "addIcon.png"
-            
-            add.appendChild(img);
-            trackid.appendChild(document.createTextNode(JSON.stringify(data[i].track_id).replaceAll('"','')))
-            title.appendChild(document.createTextNode(JSON.stringify(data[i].track_title).replaceAll('"','')))
-            artist.appendChild(document.createTextNode(JSON.stringify(data[i].artist_name).replaceAll('"','')))
-            album.appendChild(document.createTextNode(JSON.stringify(data[i].album_title).replaceAll('"','')))
-            duration.appendChild(document.createTextNode(JSON.stringify(data[i].track_duration).replaceAll('"','')))
-    
-            element.appendChild(trackid)
-            element.appendChild(title)
-            element.appendChild(album)
-            element.appendChild(artist)
-            element.appendChild(duration)
-            element.appendChild(add)
-    
-            ul.appendChild(element);
-        });
-
+        if (data[0].tracks.length > 0) {
+            alert(JSON.stringify(data[0].tracks))
+        }else{
+            alert("Empty Playlist!")
+        }
     }
 }
 document.getElementById('playlist-header').addEventListener('click',function(e) {clearSelected(e)});
@@ -365,3 +330,33 @@ function clearSelected(e){
     });
     populateTracks();
 }
+document.getElementById('searchById').addEventListener("keypress", function(event){searchById(event)});
+async function searchById(event){
+    if(event.key === "Enter"){
+        const res = await fetch(`/api/tracks/${document.getElementById("searchById").value}`);
+        const data = await res.json();
+        alert(JSON.stringify(data));
+        document.getElementById("searchById").value = '';
+    }
+    
+};
+document.getElementById('searchByIdA').addEventListener("keypress", function(event){searchByIdA(event)});
+async function searchByIdA(event){
+    if(event.key === "Enter"){
+        const res = await fetch(`/api/artistid/${document.getElementById("searchByIdA").value}`);
+        const data = await res.json();
+        alert(JSON.stringify(data));
+        document.getElementById("searchByIdA").value = '';
+    }
+    
+};
+document.getElementById('searchByIdN').addEventListener("keypress", function(event){searchByIdN(event)});
+async function searchByIdN(event){
+    if(event.key === "Enter"){
+        const res = await fetch(`/api/artistname/${document.getElementById("searchByIdN").value}`);
+        const data = await res.json();
+        alert(JSON.stringify(data));
+        document.getElementById("searchByIdN").value = '';
+    }
+    
+};

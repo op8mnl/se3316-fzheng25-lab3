@@ -14,26 +14,18 @@ const PlaylistSchema = new Schema({
         required: true,
     },
     tracks: [{
-        track_id: {
-            type: Number,
-            required: false,
-        },
-        album_name: {
-            type: Number,
-            required: false,
-        },
-        track_name: {
-            type: String,
-            required: false,
-        },
-        artist: {
-            type: String,
-            required: false,
-        },
-        duration: {
-            type: String,
-            required: false,
-        }
+        _id: false,
+        track_id: Number,
+        album_name:String,
+        track_name:String,
+        artist:String,
+        duration: String,
+        album_id: Number,
+        artist_id: Number,
+        tags: String,
+        track_date_created: String,
+        track_date_recorded: String,
+        track_genres: String,
     }],
     total_duration: String,
 });
